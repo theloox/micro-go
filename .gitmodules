@@ -1,0 +1,6 @@
+[submodule "src/github.com/gorilla/mux"]
+	path = src/github.com/gorilla/mux
+	url = https://github.com/gorilla/mux
+[submodule "src/github.com/mgo.v2"]
+	path = src/github.com/mgo.v2
+	url = https://github.com/go-mgo/mgo.git
