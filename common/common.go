@@ -7,11 +7,11 @@ import (
 
 
 type Invoice struct {
-	_id int64
-	Id int64
-	Uid uint32
-	Utime int64
-	Client float64
-	Items float64
-	Amount float64
+	_id int64		`json:"_id,omitempty`
+	Id int64			`json:"id,omitempty`
+	Uid uint32		`json:"uid,omitempty`
+	Utime int64		`json:"utime,omitempty`
+	Client float64	`json:"client,omitempty`
+	Items float64	`json:"items,omitempty`
+	Amount float64	`json:"amount,omitempty`
 }
