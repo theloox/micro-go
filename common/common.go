@@ -7,10 +7,11 @@ import (
 
 
 type Invoice struct {
-    Id int64
-    Uid uint32
-    Utime int64
-    Client float64
-    Items float64
-    Amount float64
+	_id int64
+	Id int64
+	Uid uint32
+	Utime int64
+	Client float64
+	Items float64
+	Amount float64
 }
