@@ -3,6 +3,7 @@ package main
 import (
     "fmt"
 	"os"
+	"strconv"
 	"time"
     "encoding/json"
 	"math/rand"
@@ -120,6 +121,52 @@ func create(w http.ResponseWriter, r *http.Request) {
 }
 
 func rd(w http.ResponseWriter, r *http.Request) {
+	var id int
+
+
+	fmt.Printf("req: %s\n", r.URL)
+
+	w.Header().Set("Content-Type", "text/json")
+
+	vars := mux.Vars(r)
+
+	id, _ = strconv.Atoi(vars["id"])
+
+	if (id == 0) {
+		w.Write([]byte("{\"status\": 200, \"msg:\": \"id not found\"}"))
+		return
+	}
+
+	// db
+	session, err := mgo.Dial("localhost/invoicing")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "panic: db connection failed %s\n", err)
+
+		w.WriteHeader(500)
+		w.Write([]byte("{\"status\": 500, \"msg:\": \"Inernal server error\"}"))
+
+		return
+	}
+	defer session.Close()
+
+	db := session.DB("invoicing").C("invoices")
+
+
+	var res common.Invoice
+
+	err = db.Find(bson.M{"id": id}).One(&res)
+	if (err != nil) {
+		w.Write([]byte("{\"status\": 200, \"msg:\": \"id not found\"}"))
+		return
+	}
+
+	fmt.Printf("%v\n%T\n", err, res);
+
+	jn, _ := json.Marshal(res)
+
+	w.Write([]byte("{\"status\": 200, \"msg:\": \"ok\", \"result\": "))
+	w.Write(jn)
+	w.Write([]byte("}"))
 
 }
 
@@ -128,6 +175,49 @@ func update(w http.ResponseWriter, r *http.Request){
 }
 
 func del(w http.ResponseWriter, r *http.Request) {
+	var id int
+	//var b string
+
+
+	fmt.Printf("req: %s\n", r.URL)
+
+	w.Header().Set("Content-Type", "text/json")
+
+	vars := mux.Vars(r)
+
+	id, _ = strconv.Atoi(vars["id"])
+
+	if (id == 0) {
+		w.Write([]byte("{\"status\": 200, \"msg:\": \"id not found\"}"))
+		return
+	}
+
+	// db
+	session, err := mgo.Dial("localhost/invoicing")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "panic: db connection failed %s\n", err)
+
+		w.WriteHeader(500)
+		w.Write([]byte("{\"status\": 500, \"msg:\": \"Inernal server error\"}"))
+
+		return
+	}
+	defer session.Close()
+
+	db := session.DB("invoicing").C("invoices")
+
+
+	//b = fmt.Sprintf("{\"id\": %d}", id)
+	err = db.RemoveId(id)
+
+	if (err != nil) {
+		w.Write([]byte("{\"status\": 200, \"msg:\": \"id not found\"}"))
+
+		return
+	}
+
+
+	w.Write([]byte("{\"status\": 200, \"msg:\": \"ok\"}"))
 
 }
 
@@ -153,13 +243,14 @@ func all(w http.ResponseWriter, r *http.Request) {
 
 
 	var res []common.Invoice
-	err = db.Find(nil).All(&res)
+	err = db.Find(bson.M{"_id": bson.M{"$ne": "counter"}}).All(&res)
 
 	jn, _ := json.Marshal(res)
 
 	w.Write([]byte("{\"status\": 200, \"msg:\": \"ok\", \"results\": "))
 	w.Write(jn)
 	w.Write([]byte("}"))
+
 }
 
 
@@ -168,9 +259,13 @@ func main() {
 
     router.HandleFunc("/", root)
     router.HandleFunc("/create", create)
-    router.HandleFunc("/read/{appid}", rd)
+    router.HandleFunc("/read", rd)
+    router.HandleFunc("/read/", rd)
+    router.HandleFunc("/read/{id}", rd)
     router.HandleFunc("/update", update)
     router.HandleFunc("/delete", del)
+    router.HandleFunc("/delete/", del)
+    router.HandleFunc("/delete/{id}", del)
     router.HandleFunc("/all", all)
 
 	// db
