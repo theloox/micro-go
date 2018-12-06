@@ -1,13 +1,13 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 	"os"
 	"strconv"
 	"time"
-    "encoding/json"
+	"encoding/json"
 	"math/rand"
-    "net/http"
+	"net/http"
 
 	"github.com/gorilla/mux"
 	"gopkg.in/mgo.v2"
@@ -324,16 +324,16 @@ func all(w http.ResponseWriter, r *http.Request) {
 func main() {
 	router := mux.NewRouter()
 
-    router.HandleFunc("/", root)
-    router.HandleFunc("/create", create)
-    router.HandleFunc("/read", rd)
-    router.HandleFunc("/read/", rd)
-    router.HandleFunc("/read/{id}", rd)
-    router.HandleFunc("/update", update)
-    router.HandleFunc("/delete", del)
-    router.HandleFunc("/delete/", del)
-    router.HandleFunc("/delete/{id}", del)
-    router.HandleFunc("/all", all)
+	router.HandleFunc("/", root)
+	router.HandleFunc("/create", create)
+	router.HandleFunc("/read", rd)
+	router.HandleFunc("/read/", rd)
+	router.HandleFunc("/read/{id}", rd)
+	router.HandleFunc("/update", update)
+	router.HandleFunc("/delete", del)
+	router.HandleFunc("/delete/", del)
+	router.HandleFunc("/delete/{id}", del)
+	router.HandleFunc("/all", all)
 
 	// db
 	session, err := mgo.Dial("localhost/invoicing")
@@ -359,5 +359,6 @@ func main() {
 
 	session.Close()
 
-    http.ListenAndServe(":8080", router)
+	b := fmt.Sprintf(":%d", common.I_PORT)
+	http.ListenAndServe(b, router)
 }

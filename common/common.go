@@ -15,3 +15,7 @@ type Invoice struct {
 	Items float64	`json:"items,omitempty"`
 	Amount float64	`json:"amount,omitempty"`
 }
+
+const A_PORT = 12001
+const I_PORT = 12002
+const R_PORT = 2003
