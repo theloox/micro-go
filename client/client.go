@@ -13,6 +13,65 @@ import (
 
 
 func analysis() {
+	var err error
+	var r string
+	var buf []byte
+
+
+	err = err
+
+
+	fmt.Printf("================\n")
+
+
+	fmt.Printf("Testing root\n")
+	r, _ = common.Xhttp("GET", common.A_PORT, "/", "")
+	fmt.Printf("%s\n", r)
+	fmt.Printf("================\n")
+
+	fmt.Printf("Testing root POST\n")
+	r, _ = common.Xhttp("POST", common.A_PORT, "/", "qwerty")
+	fmt.Printf("%s\n", r)
+	fmt.Printf("================\n")
+
+
+    fmt.Printf("Testing abnormal client #1\n");
+	r, _ = common.Xhttp("GET", common.A_PORT, "/abnormal/1", "")
+	fmt.Printf("%s\n", r)
+
+	fmt.Printf("Testing create\n")
+	buf, _ = json.Marshal(common.Invoice{Client: 1, Items:10, Amount: 4200.00})
+	r, _ = common.Xhttp("POST", common.I_PORT, "/create", string(buf))
+	fmt.Printf("%s\n", r)
+
+    fmt.Printf("Testing abnormal client #1\n");
+	r, _ = common.Xhttp("GET", common.A_PORT, "/abnormal/1", "")
+	fmt.Printf("%s\n", r)
+	fmt.Printf("================\n")
+
+
+    fmt.Printf("Testing duplicates\n");
+	r, _ = common.Xhttp("GET", common.A_PORT, "/duplicates", "")
+	fmt.Printf("%s\n", r)
+	fmt.Printf("================\n")
+
+
+    fmt.Printf("Testing same uid\n");
+	r, _ = common.Xhttp("GET", common.A_PORT, "/same", "")
+	fmt.Printf("%s\n", r)
+	fmt.Printf("================\n")
+
+	fmt.Printf("Testing create\n")
+	buf, _ = json.Marshal(common.Invoice{Client: 3, Items:33, Amount: 330.00, Uid: 33333333})
+	r, _ = common.Xhttp("POST", common.I_PORT, "/create", string(buf))
+	r, _ = common.Xhttp("POST", common.I_PORT, "/create", string(buf))
+	fmt.Printf("%s\n", r)
+
+    fmt.Printf("Testing same uid\n");
+	r, _ = common.Xhttp("GET", common.A_PORT, "/same", "")
+	fmt.Printf("%s\n", r)
+	fmt.Printf("================\n")
+
 
 }
 
@@ -116,6 +175,61 @@ func invoicing() {
 
 
 func reporting() {
+	var err error
+	var r string
+
+
+	err = err
+
+
+	fmt.Printf("================\n")
+	fmt.Printf("p %d\n", common.R_PORT)
+
+
+	fmt.Printf("Testing root\n")
+	r, _ = common.Xhttp("GET", common.R_PORT, "/", "")
+	fmt.Printf("%s\n", r)
+	fmt.Printf("================\n")
+
+	fmt.Printf("Testing root POST\n")
+	r, _ = common.Xhttp("POST", common.R_PORT, "/", "qwerty")
+	fmt.Printf("%s\n", r)
+	fmt.Printf("================\n")
+
+
+    fmt.Printf("Testing all\n");
+	r, _ = common.Xhttp("GET", common.R_PORT, "/all", "")
+	fmt.Printf("%s\n", r)
+	fmt.Printf("================\n")
+
+
+    fmt.Printf("Testing client(field) #1\n");
+	r, _ = common.Xhttp("GET", common.R_PORT, "/client/1", "")
+	fmt.Printf("%s\n", r)
+	fmt.Printf("================\n")
+
+    fmt.Printf("Testing client(field) #9999 (not found)\n");
+	r, _ = common.Xhttp("GET", common.R_PORT, "/client/9999", "")
+	fmt.Printf("%s\n", r)
+	fmt.Printf("================\n")
+
+
+    fmt.Printf("Testing last 60 (seconds)\n");
+	r, _ = common.Xhttp("GET", common.R_PORT, "/last/60", "")
+	fmt.Printf("%s\n", r)
+	fmt.Printf("================\n")
+
+    fmt.Printf("Testing last 3600 (seconds)\n");
+	r, _ = common.Xhttp("GET", common.R_PORT, "/last/3600", "")
+	fmt.Printf("%s\n", r)
+	fmt.Printf("================\n")
+
+
+    fmt.Printf("Testing today\n");
+	r, _ = common.Xhttp("GET", common.R_PORT, "/today", "")
+	fmt.Printf("%s\n", r)
+	fmt.Printf("================\n")
+
 
 }
 
