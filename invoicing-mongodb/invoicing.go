@@ -46,7 +46,7 @@ func create(w http.ResponseWriter, r *http.Request) {
 
 	// db
 	session, err := mgo.Dial("localhost/invoicing")
-	if err != nil {
+	if (err != nil) {
 		fmt.Fprintf(os.Stderr, "panic: db connection failed %s\n", err)
 
 		w.WriteHeader(500)
@@ -61,7 +61,7 @@ func create(w http.ResponseWriter, r *http.Request) {
 	d := json.NewDecoder(r.Body)
 
 	err = d.Decode(&in)
-	if err != nil {
+	if (err != nil) {
 		w.WriteHeader(400)
 		w.Write([]byte("{\"status\": 400, \"msg\": \"bad request\"}"))
 		//w.Write([]byte(err.Error()))
@@ -75,7 +75,7 @@ func create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	_, err = db.Find(bson.M{"_id": "counter"}).Apply(change, &rid)
-	if err != nil {
+	if (err != nil) {
 		fmt.Fprintf(os.Stderr, "panic: Can't insert in db %s\n", err)
 
 		w.WriteHeader(500)
@@ -102,7 +102,7 @@ func create(w http.ResponseWriter, r *http.Request) {
 	//fmt.Printf("m: %v\n\n", m);
 
 	err = db.Insert(&m)
-	if err != nil {
+	if (err != nil) {
 		fmt.Fprintf(os.Stderr, "panic: Can't insert in db\n")
 
 		w.WriteHeader(500)
@@ -137,7 +137,7 @@ func rd(w http.ResponseWriter, r *http.Request) {
 
 	// db
 	session, err := mgo.Dial("localhost/invoicing")
-	if err != nil {
+	if (err != nil) {
 		fmt.Fprintf(os.Stderr, "panic: db connection failed %s\n", err)
 
 		w.WriteHeader(500)
@@ -187,7 +187,7 @@ func update(w http.ResponseWriter, r *http.Request){
 	d := json.NewDecoder(r.Body)
 
 	err := d.Decode(&in)
-	if err != nil {
+	if (err != nil) {
 		w.WriteHeader(400)
 		w.Write([]byte("{\"status\": 400, \"msg\": \"bad request\"}"))
 		//w.Write([]byte(err.Error()))
@@ -209,7 +209,7 @@ func update(w http.ResponseWriter, r *http.Request){
 
 	// db
 	session, err := mgo.Dial("localhost/invoicing")
-	if err != nil {
+	if (err != nil) {
 		fmt.Fprintf(os.Stderr, "panic: db connection failed %s\n", err)
 
 		w.WriteHeader(500)
@@ -262,7 +262,7 @@ func del(w http.ResponseWriter, r *http.Request) {
 
 	// db
 	session, err := mgo.Dial("localhost/invoicing")
-	if err != nil {
+	if (err != nil) {
 		fmt.Fprintf(os.Stderr, "panic: db connection failed %s\n", err)
 
 		w.WriteHeader(500)
@@ -289,6 +289,8 @@ func del(w http.ResponseWriter, r *http.Request) {
 }
 
 func all(w http.ResponseWriter, r *http.Request) {
+	var tot int
+
 
 	fmt.Printf("req: %s\n", r.URL)
 
@@ -296,7 +298,7 @@ func all(w http.ResponseWriter, r *http.Request) {
 
 	// db
 	session, err := mgo.Dial("localhost/invoicing")
-	if err != nil {
+	if (err != nil) {
 		fmt.Fprintf(os.Stderr, "panic: db connection failed %s\n", err)
 
 		w.WriteHeader(500)
@@ -311,12 +313,30 @@ func all(w http.ResponseWriter, r *http.Request) {
 
 	var res []common.Invoice
 	err = db.Find(bson.M{"_id": bson.M{"$ne": "counter"}}).All(&res)
+	if (err != nil) {
+		fmt.Fprintf(os.Stderr, "panic: db find %s\n", err)
+
+		w.WriteHeader(500)
+		w.Write([]byte("{\"status\": 500, \"msg\": \"Inernal server error\"}"))
+
+		return
+	}
+
+	tot, err = db.Count()
+	tot = tot - 1
+	if (err != nil) {
+		fmt.Fprintf(os.Stderr, "panic: db count %s\n", err)
+
+		w.WriteHeader(500)
+		w.Write([]byte("{\"status\": 500, \"msg\": \"Inernal server error\"}"))
+
+		return
+	}
 
 	jn, _ := json.Marshal(res)
 
-	w.Write([]byte("{\"status\": 200, \"msg\": \"ok\", \"results\": "))
-	w.Write(jn)
-	w.Write([]byte("}"))
+	b := fmt.Sprintf("{\"status\": 200, \"msg\": \"ok\", \"total\": %d, \"results\": %s}", tot, jn)
+	w.Write([]byte(b))
 
 }
 
@@ -337,7 +357,7 @@ func main() {
 
 	// db
 	session, err := mgo.Dial("localhost/invoicing")
-	if err != nil {
+	if (err != nil) {
 		fmt.Fprintf(os.Stderr, "panic: db connection failed %s\n", err)
 		os.Exit(2)
 	}
@@ -351,7 +371,7 @@ func main() {
 
 		err = db.Insert(bson.M{"_id": "counter", "val": 0})
 
-		if err != nil {
+		if (err != nil) {
 			fmt.Fprintf(os.Stderr, "panic: db counter failed %s\n", err)
 			os.Exit(2)
 		}
