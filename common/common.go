@@ -42,7 +42,7 @@ func Xhttp(m string, p int, u string, b string) (string, error) {
 
 	cl = &http.Client{}
 
-	url := fmt.Sprintf("%s:%d%s", HOST, I_PORT, u)
+	url := fmt.Sprintf("%s:%d%s", HOST, p, u)
 
 	if (b == "") {
 		req, err = http.NewRequest(m, url, nil)
