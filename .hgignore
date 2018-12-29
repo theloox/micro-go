@@ -1,0 +1,9 @@
+.hg/
+.git/
+
+pkg/
+analysis/analysis
+client/client
+invoicing-mongodb/invoicing-mongodb
+reporting/reporting
+
