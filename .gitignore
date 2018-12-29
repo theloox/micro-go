@@ -1,5 +1,5 @@
-.hg
-.git
+.hg/
+.git/
 
 pkg/
 analysis/analysis
